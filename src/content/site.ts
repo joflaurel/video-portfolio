@@ -14,6 +14,8 @@ export const SITE: Site = {
   status: 'Open for work',
   statusNote: 'Taking new projects',
   tagline: 'Short-form and long-form video editing.',
+  intro:
+    "I'm Jofrey, a video editor in Cebu, Philippines. I edit Instagram Reels, TikToks, YouTube long-form videos and UGC-style ads for creators, cafés and brands.",
   bio: 'Video editor with 1.5+ years of experience editing short-form and long-form content for YouTube, Reels and TikTok. I build every edit around a strong hook in the first 3 seconds, tight pacing and clear captions, and I handle the full process from raw footage to upload.',
   specialty: 'Short-form',
   languages: 'English',

@@ -13,7 +13,18 @@ export function buildPersonJsonLd() {
     jobTitle: SITE.role,
     url: SITE_URL,
     email: `mailto:${SITE.email}`,
-    address: { '@type': 'PostalAddress', addressLocality: SITE.location },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: SITE.location,
+      addressCountry: 'PH',
+    },
+    knowsAbout: [
+      'Video editing',
+      'Short-form video',
+      'Instagram Reels',
+      'YouTube long-form editing',
+      'UGC ads',
+    ],
     sameAs: SITE.links.filter((link) => link.url.includes('instagram.com')).map((link) => link.url),
   };
 }

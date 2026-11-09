@@ -14,8 +14,8 @@ import './globals.css';
 // Fallback for devices without the San Francisco system font; self-hosted by Next.js at build time.
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 
-const title = `${SITE.name} — ${SITE.role}`;
-const description = `${SITE.role} in ${SITE.location}. ${SITE.tagline}`;
+const title = `${SITE.name} — ${SITE.role} in the Philippines`;
+const description = `Hire ${SITE.name}, a ${SITE.role.toLowerCase()} in ${SITE.location}. Hook-first Instagram Reels, TikToks, YouTube long-form videos and UGC-style ads, with fast turnaround.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
