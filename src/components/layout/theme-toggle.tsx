@@ -11,21 +11,13 @@ import {
 import { Icon } from '@/components/ui/icon';
 import styles from './theme-toggle.module.css';
 
-const DARK_QUERY = '(prefers-color-scheme: dark)';
-
 function subscribe(onChange: () => void): () => void {
-  const media = window.matchMedia(DARK_QUERY);
-  media.addEventListener('change', onChange);
   window.addEventListener(THEME_CHANGE_EVENT, onChange);
-  return () => {
-    media.removeEventListener('change', onChange);
-    window.removeEventListener(THEME_CHANGE_EVENT, onChange);
-  };
+  return () => window.removeEventListener(THEME_CHANGE_EVENT, onChange);
 }
 
 function getTheme(): Theme {
-  const applied = document.documentElement.dataset.theme;
-  return resolveTheme(applied, window.matchMedia(DARK_QUERY).matches);
+  return resolveTheme(document.documentElement.dataset.theme);
 }
 
 function applyTheme(theme: Theme): void {
@@ -39,7 +31,7 @@ function applyTheme(theme: Theme): void {
 }
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, getTheme, (): Theme => 'light');
+  const theme = useSyncExternalStore(subscribe, getTheme, (): Theme => 'dark');
   const target = oppositeTheme(theme);
 
   return (

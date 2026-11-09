@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { BackgroundVideo } from '@/components/layout/background-video';
 import { LegacyHashRedirect } from '@/components/layout/legacy-hash-redirect';
 import { NavBar } from '@/components/layout/nav-bar';
 import { PageContainer } from '@/components/layout/page-container';
@@ -36,21 +37,19 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f2f2f7' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
-  ],
+  colorScheme: 'dark light',
+  themeColor: '#000000',
 };
 
 export default function RootLayout({ children }: { readonly children: ReactNode }) {
   return (
     // The theme script below sets data-theme before React loads, hence suppressHydrationWarning.
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" data-theme="dark" className={inter.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
+        <BackgroundVideo />
         <SkipLink />
         <NavBar />
         <PageContainer>{children}</PageContainer>

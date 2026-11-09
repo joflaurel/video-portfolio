@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY, oppositeTheme, resolveTheme } from './theme';
 
 describe('resolveTheme', () => {
-  it('prefers the saved choice over the device setting', () => {
-    expect(resolveTheme('light', true)).toBe('light');
-    expect(resolveTheme('dark', false)).toBe('dark');
+  it('uses the saved choice', () => {
+    expect(resolveTheme('light')).toBe('light');
+    expect(resolveTheme('dark')).toBe('dark');
   });
 
-  it('follows the device when nothing valid is saved', () => {
-    expect(resolveTheme(null, true)).toBe('dark');
-    expect(resolveTheme(null, false)).toBe('light');
-    expect(resolveTheme('purple', true)).toBe('dark');
+  it('defaults to dark when nothing valid is saved', () => {
+    expect(resolveTheme(null)).toBe('dark');
+    expect(resolveTheme(undefined)).toBe('dark');
+    expect(resolveTheme('purple')).toBe('dark');
   });
 });
 
