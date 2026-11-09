@@ -18,8 +18,9 @@ export function driveThumbnailUrl(fileId: string, width = 800): string {
   return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w${width}`;
 }
 
+/** `hl=en` keeps the player's menus in English instead of the visitor's Google language. */
 export function driveEmbedUrl(fileId: string): string {
-  return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview`;
+  return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview?hl=en`;
 }
 
 export function driveViewUrl(fileId: string): string {

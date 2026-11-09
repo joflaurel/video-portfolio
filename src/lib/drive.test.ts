@@ -34,7 +34,7 @@ describe('Drive URL builders', () => {
   });
 
   it('builds the embed and view URLs', () => {
-    expect(driveEmbedUrl(ID)).toBe(`https://drive.google.com/file/d/${ID}/preview`);
+    expect(driveEmbedUrl(ID)).toBe(`https://drive.google.com/file/d/${ID}/preview?hl=en`);
     expect(driveViewUrl(ID)).toBe(`https://drive.google.com/file/d/${ID}/view`);
   });
 });
