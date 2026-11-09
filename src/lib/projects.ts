@@ -44,7 +44,7 @@ export function getEmbed(media: Media): Embed {
     case 'youtube':
       return {
         type: 'iframe',
-        src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(media.videoId)}?autoplay=1&rel=0&playsinline=1`,
+        src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(media.videoId)}?autoplay=1&rel=0&playsinline=1&hl=en`,
         allow: 'autoplay; fullscreen; encrypted-media; picture-in-picture',
         scaleToFit: false,
       };
