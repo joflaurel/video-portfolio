@@ -631,12 +631,22 @@ const sheet = $("#sheet"), scrim = $("#scrim"), player = $("#player");
 $("#sheetClose").innerHTML = I.x;
 let lastFocus = null;
 
+/* Google Drive's player crops the video when its frame is narrower than ~300px (which a phone-sized 9:16 box is).
+   So give it a normal-sized frame and scale that frame down to fit the visible box. */
+function fitDrive(){
+  const f = player.querySelector("iframe[data-drive]"); if (!f) return;
+  const box = player.getBoundingClientRect(); if (!box.width) return;
+  const W = Math.max(360, box.width), H = box.height * (W / box.width);
+  f.style.cssText = `position:absolute;left:0;top:0;right:auto;bottom:auto;width:${W}px;height:${H}px;transform:scale(${box.width / W});transform-origin:0 0;border:0`;
+}
+addEventListener("resize", fitDrive);
+
 function openSheet(id){
   const p = byId[id]; if (!p) return;
   lastFocus = document.activeElement;
   player.className = "player " + rcls(p.ratio);
   player.style.setProperty("--h", p.hue);
-  if (p.drive)        player.innerHTML = `<iframe src="https://drive.google.com/file/d/${encodeURIComponent(driveId(p.drive))}/preview" allow="autoplay; fullscreen" allowfullscreen title="${esc(p.title)}"></iframe>`;
+  if (p.drive)        { player.innerHTML = `<iframe data-drive src="https://drive.google.com/file/d/${encodeURIComponent(driveId(p.drive))}/preview" allow="autoplay; fullscreen" allowfullscreen title="${esc(p.title)}"></iframe>`; fitDrive(); }
   else if (p.youtube) player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube)}?autoplay=1&rel=0&playsinline=1" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen title="${esc(p.title)}"></iframe>`;
   else if (p.vimeo)   player.innerHTML = `<iframe src="https://player.vimeo.com/video/${encodeURIComponent(p.vimeo)}?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(p.title)}"></iframe>`;
   else if (p.file)    player.innerHTML = `<video src="${esc(p.file)}" ${p.thumb?`poster="${esc(p.thumb)}"`:""} controls autoplay playsinline></video>`;
