@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { PageHeader } from '@/components/ui/page-header';
+import { Testimonials } from '@/components/work/testimonials';
 import { WorkGallery } from '@/components/work/work-gallery';
 import { PROJECTS } from '@/content/projects';
 import { SITE } from '@/content/site';
@@ -16,7 +17,7 @@ export default function WorkPage() {
   return (
     <>
       <PageHeader title="Work" subtitle={`${SITE.role} · ${SITE.location}. ${SITE.tagline}`} />
-      <WorkGallery projects={projects} />
+      <WorkGallery projects={projects} afterFeatured={<Testimonials />} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildPersonJsonLd()) }}

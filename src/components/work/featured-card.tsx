@@ -9,18 +9,18 @@ interface FeaturedCardProps {
   readonly onOpen: (id: string) => void;
 }
 
-/** The large "Today"-style card at the top of the Work page. */
+/** The large "Today"-style showreel card at the top of the Work page. */
 export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
   return (
     <button
       type="button"
       className={styles.featured}
       style={cssVars({ '--h': project.hue })}
-      aria-label={`Watch featured video: ${project.title}`}
+      aria-label={`Watch showreel: ${project.title}`}
       onClick={() => onOpen(project.id)}
     >
       <ThumbnailImage className={styles.image} src={project.thumbnailUrl} lazy={false} />
-      <span className={styles.label}>Featured</span>
+      <span className={styles.label}>Showreel</span>
       <span className={styles.bottom}>
         <span>
           <span className={styles.title}>{project.title}</span>

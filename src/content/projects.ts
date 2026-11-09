@@ -8,7 +8,7 @@ import type { Project } from './types';
  *  To add a video: copy one entry, paste it where you want it to appear, and change
  *  `id` (must be unique), `title`, `category` (see categories.ts), `hue` and the Drive
  *  link/id inside `drive(...)`. Optional fields: `client`, `description`, `tools`,
- *  `thumbnail`, `featured: true` (only one video should be featured).
+ *  `thumbnail`, `featured: true` (the one video shown as the showreel).
  *
  *  The tests (npm test) catch duplicate ids, unknown categories and bad Drive links.
  * ───────────────────────────────────────────────────────────────────────────
@@ -21,7 +21,6 @@ export const PROJECTS: readonly Project[] = [
     client: 'Just Go Ministries',
     hue: 220,
     orientation: 'horizontal',
-    featured: true,
     media: youtube('bNgQARdX4cA'),
   },
   {
@@ -238,7 +237,9 @@ export const PROJECTS: readonly Project[] = [
     id: 'd29',
     title: 'MindFriend edit',
     category: 'talk',
+    description: 'A taste of my short-form style — fast hook, tight pacing and clean captions.',
     hue: 251,
+    featured: true,
     media: drive('1CgPJOXChjxAEkahP5Dp8LALx5xHxoHhH'),
   },
   {

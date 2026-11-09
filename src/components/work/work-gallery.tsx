@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import type { Orientation } from '@/content/types';
 import {
   ALL,
@@ -21,10 +21,12 @@ import styles from './work-gallery.module.css';
 
 interface WorkGalleryProps {
   readonly projects: readonly ResolvedProject[];
+  /** Shown between the showreel card and the filters (used for client testimonials). */
+  readonly afterFeatured?: ReactNode;
 }
 
-/** The interactive part of the Work page: featured card, filters, video grid and player. */
-export function WorkGallery({ projects }: WorkGalleryProps) {
+/** The interactive part of the Work page: showreel card, filters, video grid and player. */
+export function WorkGallery({ projects, afterFeatured }: WorkGalleryProps) {
   const [filter, setFilter] = useState<Filter>(ALL);
   const [shown, setShown] = useState(PAGE_SIZE);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -62,6 +64,8 @@ export function WorkGallery({ projects }: WorkGalleryProps) {
   return (
     <>
       {featured ? <FeaturedCard project={featured} onOpen={handleOpen} /> : null}
+
+      {afterFeatured}
 
       <FilterPills options={options} selected={filter} onSelect={handleSelectFilter} />
 
