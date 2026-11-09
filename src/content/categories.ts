@@ -24,7 +24,7 @@ export const CATEGORIES = {
   longform: {
     label: 'Long-form',
     description:
-      'Long-form YouTube edit — clean cuts, B-roll that matches what is said and zooms on the key points.',
+      'Long-form YouTube edit — tight cuts, B-roll that matches every line, and punch-in zooms that land the key points.',
   },
   kids: {
     label: 'Kids Content',
