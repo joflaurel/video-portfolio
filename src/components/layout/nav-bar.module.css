@@ -1,0 +1,58 @@
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 30;
+  padding-top: env(safe-area-inset-top);
+  background: transparent;
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
+}
+
+.nav[data-scrolled='true'] {
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  backdrop-filter: saturate(180%) blur(22px);
+  box-shadow: 0 0.5px 0 var(--sep);
+}
+
+.inner {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.nav[data-scrolled='true'] .title {
+  opacity: 1;
+  transform: none;
+}
+
+.brand {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label2);
+  transition: opacity 0.2s;
+}
+
+.nav[data-scrolled='true'] .brand {
+  opacity: 0;
+}

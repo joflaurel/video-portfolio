@@ -1,0 +1,16 @@
+.link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.link:focus-visible {
+  transform: none;
+}

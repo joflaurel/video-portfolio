@@ -1,0 +1,38 @@
+.pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 26px -20px 18px;
+  padding: 2px 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pills::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--fill);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label2);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.pill small {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.pill[aria-pressed='true'] {
+  background: var(--blue);
+  color: #fff;
+}

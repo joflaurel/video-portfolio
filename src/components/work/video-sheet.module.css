@@ -1,0 +1,146 @@
+.sheet {
+  position: fixed;
+  inset: auto auto 0 50%;
+  margin: 0;
+  width: min(680px, 100%);
+  max-width: none;
+  max-height: 94dvh;
+  overflow: auto;
+  padding: 0 0 calc(24px + env(safe-area-inset-bottom));
+  border: 0;
+  color: var(--label);
+  background: var(--bg);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.25);
+  transform: translate(-50%, 105%);
+  transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+  transition:
+    transform 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+    overlay 0.45s allow-discrete,
+    display 0.45s allow-discrete;
+}
+
+.sheet[open] {
+  transform: translate(-50%, 0);
+}
+
+@starting-style {
+  .sheet[open] {
+    transform: translate(-50%, 105%);
+  }
+}
+
+.sheet[data-dragging='true'] {
+  transition: none;
+}
+
+/* A video iframe would swallow the pointer events of a swipe that passes over it. */
+.sheet[data-dragging='true'] iframe {
+  pointer-events: none;
+}
+
+.sheet::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s;
+  transition:
+    opacity 0.3s,
+    overlay 0.3s allow-discrete,
+    display 0.3s allow-discrete;
+}
+
+.sheet[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .sheet[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 6px;
+  cursor: grab;
+  touch-action: none;
+  background: var(--bg);
+}
+
+.grabber {
+  width: 38px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--label3);
+}
+
+.close {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--label2);
+  display: grid;
+  place-items: center;
+}
+
+.close svg {
+  width: 12px;
+  height: 12px;
+}
+
+.player {
+  position: relative;
+  margin: 8px auto 0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: linear-gradient(150deg, hsl(var(--h) 80% 60%), hsl(calc(var(--h) + 40) 75% 40%));
+}
+
+.player[data-orientation='horizontal'] {
+  width: calc(100% - 32px);
+  aspect-ratio: 16 / 9;
+}
+
+.player[data-orientation='vertical'] {
+  width: min(calc(100% - 32px), calc(56dvh * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+
+.player[data-orientation='square'] {
+  width: min(calc(100% - 32px), 56dvh);
+  aspect-ratio: 1 / 1;
+}
+
+.body {
+  padding: 18px 20px 0;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.description {
+  font-size: 17px;
+  color: var(--label2);
+  margin-top: 12px;
+}

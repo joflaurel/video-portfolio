@@ -1,0 +1,22 @@
+.cta {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+  font-size: 17px;
+  padding: 15px;
+  border-radius: 14px;
+  margin-top: 22px;
+}
+
+.cta:active {
+  opacity: 0.8;
+}
+
+.cta[data-variant='secondary'] {
+  background: var(--fill);
+  color: var(--blue);
+  margin-top: 10px;
+}
