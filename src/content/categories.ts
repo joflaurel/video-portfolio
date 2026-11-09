@@ -21,6 +21,11 @@ export const CATEGORIES = {
     label: 'UGC & AI Ads',
     description: 'UGC-style ad edit with a strong first-3-seconds hook and clear captions.',
   },
+  longform: {
+    label: 'Long-form',
+    description:
+      'Long-form YouTube edit — clean cuts, steady pacing and captions that hold attention.',
+  },
   kids: {
     label: 'Kids Content',
     description:
