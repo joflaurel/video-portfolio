@@ -2,7 +2,8 @@ import { SITE } from '@/content/site';
 import { mailtoLink, whatsappLink } from '@/lib/contact';
 import styles from './hire-buttons.module.css';
 
-const WHATSAPP_MESSAGE = "Hi Jofrey, I found your portfolio and I'd like to talk about a video edit.";
+const WHATSAPP_MESSAGE =
+  "Hi Jofrey, I found your portfolio and I'd like to talk about a video edit.";
 const EMAIL_SUBJECT = 'Video editing project';
 
 /** Two big buttons so a visitor can hire Jofrey without hunting for the Contact page. */
