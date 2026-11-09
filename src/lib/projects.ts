@@ -60,9 +60,21 @@ export function getEmbed(media: Media): Embed {
   }
 }
 
+/** YouTube's own 16:9 cover image (1280×720). It is missing only for very old, low-res uploads. */
+function youtubeThumbnailUrl(videoId: string): string {
+  return `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/maxresdefault.jpg`;
+}
+
 export function getThumbnailUrl(project: Project): string | null {
   if (project.thumbnail) return project.thumbnail;
-  return project.media.kind === 'drive' ? driveThumbnailUrl(project.media.fileId) : null;
+  switch (project.media.kind) {
+    case 'drive':
+      return driveThumbnailUrl(project.media.fileId);
+    case 'youtube':
+      return youtubeThumbnailUrl(project.media.videoId);
+    default:
+      return null;
+  }
 }
 
 function getExternalUrl(media: Media): string | null {

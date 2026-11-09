@@ -1,4 +1,4 @@
-import { drive } from './media';
+import { drive, youtube } from './media';
 import type { Project } from './types';
 
 /**
@@ -22,7 +22,7 @@ export const PROJECTS: readonly Project[] = [
     hue: 220,
     orientation: 'horizontal',
     featured: true,
-    media: drive('1Nz0IPRuNlU5hkb5aEqV2_01NHPVGmEEm'),
+    media: youtube('bNgQARdX4cA'),
   },
   {
     id: 'd1',

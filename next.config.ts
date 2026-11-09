@@ -12,7 +12,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com https://*.google.com",
+  "img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com https://*.google.com https://i.ytimg.com",
   "font-src 'self'",
   "media-src 'self' blob:",
   "connect-src 'self'",

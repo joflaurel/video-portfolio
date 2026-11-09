@@ -45,7 +45,13 @@ describe('resolveProject', () => {
   it('uses the Drive preview image as thumbnail unless one is given', () => {
     expect(resolveProject(base).thumbnailUrl).toContain(`id=${FILE_ID}`);
     expect(resolveProject({ ...base, thumbnail: '/cover.jpg' }).thumbnailUrl).toBe('/cover.jpg');
-    expect(resolveProject({ ...base, media: youtube('abc123') }).thumbnailUrl).toBeNull();
+    expect(resolveProject({ ...base, media: vimeo('123') }).thumbnailUrl).toBeNull();
+  });
+
+  it('uses the YouTube cover image for YouTube videos', () => {
+    expect(resolveProject({ ...base, media: youtube('abc123') }).thumbnailUrl).toBe(
+      'https://i.ytimg.com/vi/abc123/maxresdefault.jpg',
+    );
   });
 
   it('links to Google Drive only for Drive videos', () => {
