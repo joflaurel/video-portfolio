@@ -1,0 +1,30 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: #000 url('/videos/background-poster.jpg') center 85% / cover no-repeat;
+  pointer-events: none;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* On wide screens the tall video is cropped; keep its glowing lower part in view. */
+  object-position: center 85%;
+}
+
+/* A tint over the video so text stays readable; its strength depends on the theme. */
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video {
+    display: none;
+  }
+}
