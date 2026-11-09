@@ -1,0 +1,32 @@
+# One-off helper: resolves dependencies on a clean machine and commits package-lock.json.
+# Deleted once the lockfile exists.
+name: Bootstrap lockfile
+on:
+  push:
+    branches: [bootstrap-lockfile]
+    paths: [package.json, .github/workflows/bootstrap-lockfile.yml]
+permissions:
+  contents: write
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Resolve dependency tree
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Show resolved top-level versions
+        run: |
+          node --version
+          npm --version
+          npm ls --package-lock-only --depth=0 || true
+      - name: Commit lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Add package-lock.json" || echo "nothing to commit"
+          git push
