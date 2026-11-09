@@ -13,7 +13,6 @@ import {
 } from '@/lib/gallery';
 import { formatVideoCount } from '@/lib/format';
 import { pickFeatured, type ResolvedProject } from '@/lib/projects';
-import { CtaButton } from '@/components/ui/cta-link';
 import { FeaturedCard } from './featured-card';
 import { FilterPills } from './filter-pills';
 import { VideoGrid } from './video-grid';
@@ -33,10 +32,6 @@ export function WorkGallery({ projects }: WorkGalleryProps) {
   const [orientations, setOrientations] = useState<Readonly<Record<string, Orientation>>>({});
 
   const featured = useMemo(() => pickFeatured(projects), [projects]);
-  const longform = useMemo(
-    () => projects.find((project) => project.categoryId === 'longform') ?? null,
-    [projects],
-  );
   const options = useMemo(() => buildFilterOptions(projects), [projects]);
   const filtered = useMemo(() => filterProjects(projects, filter), [projects, filter]);
   const visible = useMemo(() => filtered.slice(0, shown), [filtered, shown]);
@@ -67,12 +62,6 @@ export function WorkGallery({ projects }: WorkGalleryProps) {
   return (
     <>
       {featured ? <FeaturedCard project={featured} onOpen={handleOpen} /> : null}
-
-      {longform ? (
-        <div className={styles.longform}>
-          <CtaButton onClick={() => handleOpen(longform.id)}>▶ Watch long-form sample</CtaButton>
-        </div>
-      ) : null}
 
       <FilterPills options={options} selected={filter} onSelect={handleSelectFilter} />
 

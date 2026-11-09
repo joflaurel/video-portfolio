@@ -21,6 +21,7 @@ export const PROJECTS: readonly Project[] = [
     client: 'Just Go Ministries',
     hue: 220,
     orientation: 'horizontal',
+    featured: true,
     media: drive('1Nz0IPRuNlU5hkb5aEqV2_01NHPVGmEEm'),
   },
   {
@@ -239,7 +240,6 @@ export const PROJECTS: readonly Project[] = [
     category: 'talk',
     hue: 251,
     media: drive('1CgPJOXChjxAEkahP5Dp8LALx5xHxoHhH'),
-    featured: true,
   },
   {
     id: 'd30',
