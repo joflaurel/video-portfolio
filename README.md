@@ -52,7 +52,7 @@ All text and videos live in `src/content/`. Pages never contain content, so most
 ```
 
 The Drive file must be shared as "Anyone with the link → Viewer". A link or bare file id both work. `youtube('ID')`, `vimeo('ID')` and `file('/videos/x.mp4')` are also available.
-Other optional fields: `description`, `tools`, `thumbnail`, `orientation`, `featured: true` (only one video).
+Other optional fields: `description`, `tools`, `thumbnail`, `orientation`, `featured: true` (the showreel card at the top — only one video).
 
 | To change…                 | Edit                        |
 | -------------------------- | --------------------------- |
