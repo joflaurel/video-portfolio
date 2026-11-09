@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>Jofrey Igot — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ───────── iOS design tokens ───────── */
+:root{
+  --bg:#f2f2f7; --card:#ffffff; --label:#000000;
+  --label2:rgba(60,60,67,.6); --label3:rgba(60,60,67,.3);
+  --sep:rgba(60,60,67,.16); --fill:rgba(120,120,128,.12);
+  --blue:#007aff; --green:#34c759; --glass:rgba(249,249,249,.74);
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --card:#1c1c1e; --label:#ffffff;
+  --label2:rgba(235,235,245,.6); --label3:rgba(235,235,245,.3);
+  --sep:rgba(84,84,88,.55); --fill:rgba(120,120,128,.24);
+  --blue:#0a84ff; --green:#30d158; --glass:rgba(28,28,30,.72);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --card:#1c1c1e; --label:#ffffff;
+    --label2:rgba(235,235,245,.6); --label3:rgba(235,235,245,.3);
+    --sep:rgba(84,84,88,.55); --fill:rgba(120,120,128,.24);
+    --blue:#0a84ff; --green:#30d158; --glass:rgba(28,28,30,.72);
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--label);
+  -webkit-font-smoothing:antialiased; letter-spacing:-.011em; line-height:1.4;
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+/* ───────── Navigation bar ───────── */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:30;
+  padding-top:env(safe-area-inset-top);
+  background:transparent; transition:background .25s, box-shadow .25s;
+}
+.nav.scrolled{
+  background:var(--glass);
+  -webkit-backdrop-filter:saturate(180%) blur(22px); backdrop-filter:saturate(180%) blur(22px);
+  box-shadow:0 .5px 0 var(--sep);
+}
+.nav-in{height:52px;display:flex;align-items:center;justify-content:center;position:relative;max-width:1040px;margin:0 auto;padding:0 20px}
+.nav-title{font-size:17px;font-weight:600;opacity:0;transform:translateY(4px);transition:opacity .2s, transform .2s}
+.nav.scrolled .nav-title{opacity:1;transform:none}
+.nav-btn{
+  position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  background:var(--fill);color:var(--blue);
+}
+.nav-btn svg{width:18px;height:18px}
+.nav-brand{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:var(--label2);transition:opacity .2s}
+.nav.scrolled .nav-brand{opacity:0}
+
+/* ───────── Views / large titles ───────── */
+main{padding-top:calc(52px + env(safe-area-inset-top));padding-bottom:140px}
+.view{display:none}
+.view.on{display:block;animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.large-title{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.03em;padding:8px 0 2px}
+.subtitle{font-size:17px;color:var(--label2);margin:4px 0 22px;max-width:560px}
+@media(min-width:760px){.large-title{font-size:44px}}
+
+/* ───────── Featured (App Store "Today" card) ───────── */
+.featured{
+  position:relative;display:block;width:100%;text-align:left;overflow:hidden;
+  border-radius:28px;min-height:320px;color:#fff;box-shadow:var(--shadow);
+  background:linear-gradient(150deg,hsl(var(--h) 85% 58%),hsl(calc(var(--h) + 45) 80% 38%));
+  transition:transform .25s cubic-bezier(.2,.8,.2,1);
+}
+.featured:active{transform:scale(.975)}
+.featured::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 85% 0%,rgba(255,255,255,.35),transparent 55%),
+             linear-gradient(to top,rgba(0,0,0,.5),transparent 55%)}
+.featured .f-top{position:absolute;top:22px;left:24px;right:24px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.featured .f-bot{position:absolute;left:24px;right:24px;bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.featured h2{font-size:30px;line-height:1.1;font-weight:800;letter-spacing:-.025em}
+.featured p{font-size:15px;opacity:.88;margin-top:6px;max-width:440px}
+.play-pill{flex:none;display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-weight:700;font-size:15px;
+  background:rgba(255,255,255,.28);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.play-pill svg{width:14px;height:14px}
+@media(min-width:760px){.featured{min-height:400px}.featured h2{font-size:42px}}
+
+/* ───────── Segmented control ───────── */
+.pills{display:flex;gap:8px;overflow-x:auto;margin:26px -20px 18px;padding:2px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;padding:8px 16px;border-radius:999px;background:var(--fill);font-size:15px;font-weight:600;color:var(--label2);transition:background .2s,color .2s}
+.pill small{font-size:12px;font-weight:600;opacity:.7;margin-left:4px}
+.pill.on{background:var(--blue);color:#fff}
+.more{text-align:center;margin:6px 0 10px}
+.more button{background:var(--fill);color:var(--blue);font-weight:600;font-size:16px;padding:11px 26px;border-radius:999px}
+.more button:active{opacity:.7}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 12px}
+.section-head h3{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.section-head span{font-size:15px;color:var(--label2)}
+
+/* ───────── Video cards (masonry) ───────── */
+.grid{columns:2;column-gap:14px}
+@media(min-width:620px){.grid{columns:3;column-gap:18px}}
+@media(min-width:960px){.grid{columns:4}}
+.card{display:block;width:100%;text-align:left;break-inside:avoid;margin-bottom:22px;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.card:active{transform:scale(.96)}
+.thumb{
+  position:relative;overflow:hidden;border-radius:20px;box-shadow:var(--shadow);
+  background:linear-gradient(150deg,hsl(var(--h) 80% 62%),hsl(calc(var(--h) + 40) 75% 42%));
+}
+.thumb.r9x16{aspect-ratio:9/16}
+.thumb.r16x9{aspect-ratio:16/9}
+.thumb.r1x1{aspect-ratio:1/1}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(100% 70% at 80% 0%,rgba(255,255,255,.3),transparent 60%),linear-gradient(to top,rgba(0,0,0,.35),transparent 45%)}
+.play{position:absolute;z-index:1;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.25);-webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4)}
+.play svg{width:20px;height:20px;margin-left:2px}
+.badge{position:absolute;z-index:1;right:10px;bottom:10px;font-size:12px;font-weight:600;color:#fff;padding:3px 8px;border-radius:999px;
+  background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.card h4{font-size:15px;font-weight:600;margin:10px 4px 0;letter-spacing:-.012em}
+.card p{font-size:13px;color:var(--label2);margin:1px 4px 0}
+.empty{text-align:center;color:var(--label2);padding:60px 0}
+
+/* ───────── Grouped lists (Settings style) ───────── */
+.group-title{font-size:13px;text-transform:uppercase;letter-spacing:.02em;color:var(--label2);margin:28px 16px 8px}
+.group{background:var(--card);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;padding:11px 16px;min-height:52px;position:relative;width:100%;text-align:left}
+.row + .row::before{content:"";position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--sep)}
+a.row:active,button.row:active{background:var(--fill)}
+.ico{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff}
+.ico svg{width:18px;height:18px}
+.row .t{flex:1;min-width:0}
+.row .t b{display:block;font-weight:500;font-size:17px}
+.row .t small{display:block;font-size:13px;color:var(--label2)}
+.row .v{color:var(--label2);font-size:17px;text-align:right}
+.chev{width:8px;height:14px;color:var(--label3);flex:none}
+.footnote{font-size:13px;color:var(--label2);margin:8px 16px 0}
+
+/* ───────── Widgets (About) ───────── */
+.widgets{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px}
+@media(min-width:620px){.widgets{grid-template-columns:repeat(4,1fr)}}
+.widget{border-radius:22px;padding:16px;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;color:#fff;box-shadow:var(--shadow);
+  background:linear-gradient(150deg,hsl(var(--h) 85% 58%),hsl(calc(var(--h) + 35) 80% 42%))}
+.widget small{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;opacity:.85;display:flex;align-items:center;gap:6px}
+.widget small svg{width:15px;height:15px}
+.widget b{font-size:24px;line-height:1.1;font-weight:800;letter-spacing:-.025em}
+.widget span{font-size:13px;opacity:.85;display:block;margin-top:2px}
+.profile{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:20px;padding:18px;margin:6px 0 4px}
+.avatar{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:700;color:#fff;
+  background:linear-gradient(150deg,#5ac8fa,#007aff 55%,#5856d6)}
+.profile h2{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.profile p{font-size:15px;color:var(--label2)}
+.bio{background:var(--card);border-radius:14px;padding:16px;font-size:17px;margin-top:14px}
+
+.cta{display:block;width:100%;text-align:center;background:var(--blue);color:#fff;font-weight:600;font-size:17px;padding:15px;border-radius:14px;margin-top:22px}
+.cta:active{opacity:.8}
+.cta.alt{background:var(--fill);color:var(--blue);margin-top:10px}
+
+/* ───────── Floating tab bar ───────── */
+.tabbar{
+  position:fixed;z-index:30;left:50%;transform:translateX(-50%);
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  width:min(560px,calc(100% - 24px));
+  display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;border-radius:30px;
+  background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);
+  box-shadow:0 0 0 .5px var(--sep),0 10px 30px rgba(0,0,0,.14);
+}
+.entry{padding:14px 16px;position:relative}
+.entry + .entry::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.entry .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.entry b{font-size:17px;font-weight:600}
+.entry .when{font-size:13px;color:var(--label2);white-space:nowrap}
+.entry .org{font-size:15px;color:var(--blue);margin-top:1px}
+.entry ul{margin:8px 0 0 18px;font-size:15px;color:var(--label2)}
+.entry li + li{margin-top:3px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px}
+.tags .chip{background:var(--fill)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:24px;color:var(--label2);font-size:10.5px;font-weight:600;transition:background .2s,color .2s}
+.tab svg{width:25px;height:25px}
+.tab.on{color:var(--blue);background:var(--fill)}
+
+/* ───────── Bottom sheet player ───────── */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;z-index:41;left:50%;bottom:0;width:min(680px,100%);max-height:94vh;overflow:auto;
+  transform:translate(-50%,105%);transition:transform .45s cubic-bezier(.32,.72,0,1);
+  background:var(--bg);border-radius:28px 28px 0 0;padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 50px rgba(0,0,0,.25);
+}
+.sheet.on{transform:translate(-50%,0)}
+.sheet.drag{transition:none}
+.sheet-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:10px 0 6px;cursor:grab;touch-action:none;background:var(--bg)}
+.grabber{width:38px;height:5px;border-radius:3px;background:var(--label3)}
+.sheet-close{position:absolute;right:16px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--label2);display:grid;place-items:center}
+.sheet-close svg{width:12px;height:12px}
+.player{margin:8px auto 0;border-radius:20px;overflow:hidden;background:#000;position:relative;box-shadow:var(--shadow);
+  background:linear-gradient(150deg,hsl(var(--h) 80% 60%),hsl(calc(var(--h) + 40) 75% 40%))}
+.player.r16x9{width:calc(100% - 32px);aspect-ratio:16/9}
+.player.r9x16{width:min(calc(100% - 32px), calc(56vh * 9 / 16));aspect-ratio:9/16}
+.player.r1x1{width:min(calc(100% - 32px), 56vh);aspect-ratio:1/1}
+.player iframe,.player video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.player .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:20px}
+.player .ph svg{width:44px;height:44px;opacity:.9}
+.player .ph small{font-size:13px;opacity:.85;max-width:260px}
+.sheet-body{padding:18px 20px 0}
+.sheet-body h2{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1.15}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.chip{font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--fill);color:var(--label2)}
+.chip.blue{background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue)}
+.sheet-body p{font-size:17px;color:var(--label2);margin-top:12px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <span class="nav-brand" id="navBrand"></span>
+    <span class="nav-title" id="navTitle">Work</span>
+    <button class="nav-btn" id="themeBtn" aria-label="Toggle light and dark mode"></button>
+  </div>
+</header>
+
+<main>
+  <!-- WORK -->
+  <section class="view on wrap" id="view-work" data-title="Work">
+    <h1 class="large-title">Work</h1>
+    <p class="subtitle" id="workSub"></p>
+    <div id="featured"></div>
+    <div class="pills" id="pills" role="tablist" aria-label="Filter videos"></div>
+    <div class="section-head"><h3 id="gridTitle">All videos</h3><span id="gridCount"></span></div>
+    <div class="grid" id="grid"></div>
+    <div class="more" id="more"></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="view wrap" id="view-about" data-title="About">
+    <h1 class="large-title">About</h1>
+    <div class="profile">
+      <div class="avatar" id="avatar">J</div>
+      <div><h2 id="aboutName"></h2><p id="aboutRole"></p></div>
+    </div>
+    <p class="bio" id="bio"></p>
+    <div class="group-title">At a glance</div>
+    <div class="widgets" id="widgets"></div>
+    <div class="group-title">Details</div>
+    <div class="group" id="details"></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="view wrap" id="view-services" data-title="Services">
+    <h1 class="large-title">Services</h1>
+    <p class="subtitle">What I can take off your plate.</p>
+    <div class="group-title">Editing</div>
+    <div class="group" id="svcEditing"></div>
+    <div class="group-title">Polish</div>
+    <div class="group" id="svcPolish"></div>
+    <p class="footnote">Rates and turnaround depend on length and complexity — message me with your project and I'll reply with a quote.</p>
+    <a class="cta" href="#contact" data-go="contact">Start a project</a>
+  </section>
+
+  <!-- RESUME -->
+  <section class="view wrap" id="view-resume" data-title="Resume">
+    <h1 class="large-title">Resume</h1>
+    <p class="subtitle" id="resSummary"></p>
+    <div class="group-title">Experience</div>
+    <div class="group" id="resExp"></div>
+    <div class="group-title">Education</div>
+    <div class="group" id="resEdu"></div>
+    <div class="group-title">Skills &amp; tools</div>
+    <div class="group"><div class="tags" id="resSkills"></div></div>
+    <a class="cta" id="resDl" href="resume.pdf" target="_blank" rel="noopener">Download resume (PDF)</a>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="view wrap" id="view-contact" data-title="Contact">
+    <h1 class="large-title">Contact</h1>
+    <p class="subtitle">Got footage that needs a great edit? Let's talk.</p>
+    <div class="group" id="contactList"></div>
+    <p class="footnote" id="contactNote"></p>
+  </section>
+</main>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+
+<!-- Video sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="sheet-head" id="sheetHead">
+    <div class="grabber"></div>
+    <button class="sheet-close" id="sheetClose" aria-label="Close"></button>
+  </div>
+  <div class="player r16x9" id="player"></div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   EDIT ME — everything on the site comes from the two blocks
+   below. To add a new video, copy one object in PROJECTS,
+   paste it at the top, and change the fields.
+   ════════════════════════════════════════════════════════════ */
+
+const SITE = {
+  name: "Jofrey Igot",
+  role: "Video Editor",
+  location: "Cebu, Philippines",
+  timezone: "UTC+8",
+  software: "Premiere Pro & CapCut",
+  status: "Open for work",
+  tagline: "Short-form and long-form video editing.",
+  bio: "Video editor with 1.5+ years of experience editing short-form and long-form content for YouTube, Reels and TikTok. I build every edit around a strong hook in the first 3 seconds, tight pacing and clear captions, and I handle the full process from raw footage to upload.",
+  email: "joflaurel@gmail.com",
+  links: [
+    { label: "WhatsApp",  handle: "+63 998 460 8702", url: "https://wa.me/639984608702", icon: "chat", color: "#25d366" },
+    { label: "Instagram", handle: "@jofreyigot",      url: "https://www.instagram.com/jofreyigot", icon: "link", color: "#ff2d55" },
+  ],
+};
+
+/* type: "food" | "kids" | "talk" | "brand" | "ugc"   (see TYPE_LABEL below — add your own)
+   ratio: "9:16" | "16:9" | "1:1" — starts as a guess and is corrected automatically from the thumbnail.
+   Play a real video with ONE of:
+     drive:   "https://drive.google.com/file/d/…/view"  (paste the whole Drive share link;
+                                   the file must be shared as "Anyone with the link → Viewer")
+     youtube: "VIDEO_ID"          (the part after v= in a YouTube link)
+     vimeo:   "VIDEO_ID"
+     file:    "videos/my-edit.mp4" (a file next to this page)
+   Optional: thumb: "images/cover.jpg" — otherwise Drive's preview image (or a colour gradient) is used.
+   Optional: client: "@handle" shows as a tag. featured:true puts one on the big card. */
+const PROJECTS = [
+  { id:"d1", title:"You look tired from scrolling", type:"food", ratio:"9:16", hue:18, client:"@vestarwc", drive:"1rMEYpZtHFlMGUgqkhFlW_9I4-4xHr8v6", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"], featured:true },
+  { id:"d2", title:"Autumn", type:"kids", ratio:"9:16", hue:167, client:"@littleenglishtv", drive:"1PpycxzxIRpn79Z_9NjGpb65gjAn5NFri", desc:"Short-form kids' content kept bright, clear and easy for young viewers to follow.", tools:["Premiere Pro","CapCut"] },
+  { id:"d3", title:"Talking head podcast", type:"talk", ratio:"9:16", hue:249, drive:"1CgMnL7IazzcuFIe9cocwtBlxW1aRP0mi", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d4", title:"Gaming reel", type:"brand", ratio:"9:16", hue:276, drive:"1iX0Ynk9BqmYIcNeb13S97Yp5Z6PUQfat", desc:"Short-form reel edit with punchy pacing and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d5", title:"UGC · Talking head", type:"ugc", ratio:"9:16", hue:358, drive:"1E_a87VHXXKFikWvOgOwb2u2r-bvYzYZj", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d6", title:"Boss Fries", type:"food", ratio:"9:16", hue:23, client:"@samandcurry", drive:"1zzN0clA9gVCGicweBeGMjliLBIfZCbF3", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d7", title:"Transport", type:"kids", ratio:"9:16", hue:172, client:"@littleenglishtv", drive:"1c5nDtxzwQyeuOiRCPUmQJWEyeT6DVP-o", desc:"Short-form kids' content kept bright, clear and easy for young viewers to follow.", tools:["Premiere Pro","CapCut"] },
+  { id:"d8", title:"Street-style interview", type:"talk", ratio:"9:16", hue:254, drive:"1il-DkAXHNdK39xIkqjVKI4BIkIOTIgOI", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d9", title:"Insta360 reel", type:"brand", ratio:"9:16", hue:281, drive:"1Y65XXVPPtfcFoeCwSq4NRaHtsFhLNmPM", desc:"Short-form reel edit with punchy pacing and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d10", title:"UGC · Gym tank top", type:"ugc", ratio:"9:16", hue:3, drive:"127a-TPs1FXsMLcEnB3JtltmSiEJ_ty_m", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d11", title:"My inner voice when it's time to eat waffles", type:"food", ratio:"9:16", hue:28, client:"@penelopescoffeeandtea", drive:"1rWLUJ8hRGzg5XD7700oqQNOagKwwgtpz", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d12", title:"Little English edit", type:"kids", ratio:"9:16", hue:177, client:"@littleenglishtv", drive:"1kINMHdP2NMfb7WIuoxCIlaqMvMvN72pF", desc:"Short-form kids' content kept bright, clear and easy for young viewers to follow.", tools:["Premiere Pro","CapCut"] },
+  { id:"d13", title:"Consistency > intensity", type:"talk", ratio:"9:16", hue:219, drive:"19pUMG5U5ar0nWwgSilLF9B_jnGeyU2TG", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d14", title:"Commerce trial edit", type:"brand", ratio:"9:16", hue:286, drive:"179jIyD5g54Z1y3aBg9igzcAdBHFMqy9N", desc:"Short-form reel edit with punchy pacing and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d15", title:"UGC · Keychain", type:"ugc", ratio:"9:16", hue:8, drive:"1VkwZS87psIANEdjm-6imKtjQZyXeIKDB", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d16", title:"No one's diet is safe around me", type:"food", ratio:"9:16", hue:33, client:"@manakishoven", drive:"1PELwh3NIyVZD9hod2tEYFTfLw8rIwXH5", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d17", title:"She Prays, Too (reel)", type:"talk", ratio:"9:16", hue:247, drive:"168B9jjupIhjFveWiAdb5n4RLKAUVPWAc", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d18", title:"Seat covers", type:"ugc", ratio:"9:16", hue:339, drive:"1I1OTklOKzH3gxN37R-YyxUDgODcnK1yh", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d19", title:"Wanna go get Biscoff latte", type:"food", ratio:"9:16", hue:44, client:"@cereteaxyz", drive:"1w-Y34_ONfwl1vGwAlIySFlHvKVpFfWTg", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d20", title:"Evangelism reel", type:"talk", ratio:"9:16", hue:218, drive:"1GYgkdloZjBuwpxP4VTe89ndRvZ3yNVoF", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d21", title:"AI UGC · Make-up", type:"ugc", ratio:"9:16", hue:350, drive:"1YooMzwMl0TQscaNSsXOshUe_iA0Qa8kA", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d22", title:"Money can't buy happiness", type:"food", ratio:"9:16", hue:55, client:"@vestarwc", drive:"1Q43Jpum_Qzqm6j7nmVgRcM8BgBerMCP6", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d23", title:"Pastor Jason (Shorts)", type:"talk", ratio:"9:16", hue:229, drive:"1KiGV6TQ-ZjOmMPj4h648PYAvO-Mqr0Cn", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d24", title:"AI UGC · Sample 2", type:"ugc", ratio:"9:16", hue:1, drive:"1RnHWvfjlMROcJeB5nHpWeAorDmmCyLvg", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d25", title:"Sam and Curry montage", type:"food", ratio:"9:16", hue:26, client:"@samandcurry", drive:"1MMhhH-eAgZ3y97Axy93LCNh1OBNBIrz9", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d26", title:"Theo talking head", type:"talk", ratio:"9:16", hue:240, drive:"18hsXaoJ81n3Ln5Lfwd8hk0sy3bDQoezl", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d27", title:"Northline men's face wash · Hook B", type:"ugc", ratio:"9:16", hue:332, drive:"1Wks7OtTUmq-JtD243PNnBpBb1l1ztlPk", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d28", title:"Add some color please", type:"food", ratio:"9:16", hue:37, client:"@penelopescoffeeandtea", drive:"1lBmKRi76J8AAYW9Ao_UbMZnOcgk7qUUB", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d29", title:"MindFriend edit", type:"talk", ratio:"9:16", hue:251, drive:"1CgPJOXChjxAEkahP5Dp8LALx5xHxoHhH", desc:"Talking-head edit tightened for retention, with captions and clean cuts.", tools:["Premiere Pro","CapCut"] },
+  { id:"d30", title:"Northline men's face wash · Hook A", type:"ugc", ratio:"9:16", hue:343, drive:"1k5zz-pi_9LdIMUXiv0utF5FwCu5b7rN2", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d31", title:"I am always hungry", type:"food", ratio:"9:16", hue:48, client:"@manakishoven", drive:"14e0w1cmE_NvkMIcQutinVDJ6IPoQfOhy", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d32", title:"Verdely daily greens · Hook A", type:"ugc", ratio:"9:16", hue:337, drive:"1STWC-v5vvi7y06jTp6ybinYshU3ES8b_", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d33", title:"Folder", type:"food", ratio:"9:16", hue:42, client:"@cereteaxyz", drive:"1cHuSVMP-KI0uN1Ysch-SNnN7OEROFvRY", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d34", title:"Verdely daily greens · Hook B", type:"ugc", ratio:"9:16", hue:331, drive:"1IPYS8RLOgPlbbicQQRXxRp47fTOy3lep", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d35", title:"Our hands look like this", type:"food", ratio:"9:16", hue:36, client:"@vestarwc", drive:"1qHyTRc0avMk0mpv9BOkV-q17046Wru4E", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d36", title:"AI animation", type:"ugc", ratio:"9:16", hue:5, drive:"1GuOJT_2jwBNwfVi6yG3tH1KbCqPXYCZc", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d37", title:"What brought you here", type:"food", ratio:"9:16", hue:30, client:"@penelopescoffeeandtea", drive:"1qAe94ZQeXt6okEaD2rIZDEwwQCj7xyk3", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d38", title:"AI person", type:"ugc", ratio:"9:16", hue:359, drive:"1ezeySgfmK3NSyyKeWImcCzgxnV-qThlu", desc:"UGC-style ad edit with a strong first-3-seconds hook and clear captions.", tools:["Premiere Pro","CapCut"] },
+  { id:"d39", title:"When I say hmmm", type:"food", ratio:"9:16", hue:24, client:"@manakishoven", drive:"1y1hQHoLUM90aEuI5TvaCp8202KHb6-dk", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d40", title:"What I mean when I say", type:"food", ratio:"9:16", hue:41, client:"@cereteaxyz", drive:"1g_QBAbBlfaoxDkBTDpgtXJ3ApjeTC-xM", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d41", title:"I only eat pizza on days that start with T", type:"food", ratio:"9:16", hue:18, client:"@vestarwc", drive:"1JTzBnIhd5rqVrJiALxwVGFVS57PeBEzI", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d42", title:"Me, obsessed with you", type:"food", ratio:"9:16", hue:35, client:"@penelopescoffeeandtea", drive:"1dUOTxdIiZX7FT8pjgqR-_PD8Ghivcjk0", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d43", title:"What you don't see but taste", type:"food", ratio:"9:16", hue:52, client:"@manakishoven", drive:"16tncWV1y-GAeN4pWXQpWEBqzKpABNtbM", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d44", title:"Light switch", type:"food", ratio:"9:16", hue:29, client:"@cereteaxyz", drive:"1GmCWsxMiggvXRk8Q2cPIE18dh9bQKyPZ", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d45", title:"If you think you can bribe me with pizza", type:"food", ratio:"9:16", hue:46, client:"@vestarwc", drive:"1tde8HsreQLnLZXapOlNOixnA9i_nohnY", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d46", title:"How often do you think about getting waffles", type:"food", ratio:"9:16", hue:23, client:"@penelopescoffeeandtea", drive:"1NJBlazOGidpZPkR_XVAYtNvU3G4nJfgb", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d47", title:"In case you don't know how to apologize", type:"food", ratio:"9:16", hue:40, client:"@manakishoven", drive:"153iK6kgI93hQNGsVciz6uM4MtVsKiyIa", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d48", title:"3 tiles", type:"food", ratio:"9:16", hue:57, client:"@cereteaxyz", drive:"1aHVoUQZZhiIzuUTVzy9w02VfvCmAQlze", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d49", title:"Bad quality", type:"food", ratio:"9:16", hue:34, client:"@vestarwc", drive:"1SQvdEorbsIV86s-gBMDya7V1-WtNzyeJ", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d50", title:"How to kidnap me", type:"food", ratio:"9:16", hue:51, client:"@penelopescoffeeandtea", drive:"1Q0W-0HxfLOPF8g_iDN662zs9C-T8RpBp", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d51", title:"I like to eat", type:"food", ratio:"9:16", hue:28, client:"@manakishoven", drive:"1C-Whfe0UkNCrOQsBA3Xf99mk9JQHe-Us", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d52", title:"2 drink slide", type:"food", ratio:"9:16", hue:45, client:"@cereteaxyz", drive:"1-ZlaLzEkevGBgiMO7TbTS7aKh79UasrZ", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d53", title:"Wipe the camera", type:"food", ratio:"9:16", hue:22, client:"@vestarwc", drive:"1bKIdQwOwdaXLGqGYLGc9aAc4uooykeV4", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d54", title:"How much do you like waffles", type:"food", ratio:"9:16", hue:39, client:"@penelopescoffeeandtea", drive:"16-9urgY5_PLUoYRxeZ6-zD9LUsl9ljUZ", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d55", title:"Maybe you're not sad", type:"food", ratio:"9:16", hue:56, client:"@cereteaxyz", drive:"1cpvxaisEzvQMY2X2qw4n8GLC3SNIdzbW", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d56", title:"99 problems", type:"food", ratio:"9:16", hue:33, client:"@vestarwc", drive:"1ygzdGhlpvhLqFsjbVee0nBRVlJM3xbOv", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d57", title:"I know you're hungry rn", type:"food", ratio:"9:16", hue:50, client:"@penelopescoffeeandtea", drive:"1RH9ErP_mKIZo6D3b-tsl3jX2wXyjrx2i", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d58", title:"What is your vision", type:"food", ratio:"9:16", hue:27, client:"@cereteaxyz", drive:"1Okj-rkCUaSOPAf5AHsoa1KTJ5ATS-Yns", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d59", title:"4 shots", type:"food", ratio:"9:16", hue:44, client:"@vestarwc", drive:"1EQRs5A_ygvZfWIrKTnenfLCzkdVegzAm", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d60", title:"Matcha 1", type:"food", ratio:"9:16", hue:21, client:"@penelopescoffeeandtea", drive:"10mvTqAfOTX7hHvA9wVYRgQDADifD5jbN", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d61", title:"Wanna go get Cookie Butter", type:"food", ratio:"9:16", hue:38, client:"@cereteaxyz", drive:"1Om8zWsB9iHlAAvrK8ux-A_ErQXyYFi7s", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d62", title:"Different B-roll", type:"food", ratio:"9:16", hue:55, client:"@vestarwc", drive:"1vNHMmXXOfAKVSwxGk40RsVJ3aJ1kl61h", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d63", title:"Caramel apple iced matcha", type:"food", ratio:"9:16", hue:32, client:"@penelopescoffeeandtea", drive:"1hYBZ_MPiwfu-Givr-1c2AhnE6ni8OIYy", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d64", title:"Dramatic intro", type:"food", ratio:"9:16", hue:49, client:"@cereteaxyz", drive:"1TzDefJjo9Td4y5lIjdxFPJYnXoCYFqjN", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d65", title:"Good day", type:"food", ratio:"9:16", hue:26, client:"@vestarwc", drive:"1jwvaikxnXB4ylF74m3wsiOzJH6NRhsQt", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d66", title:"Matcha 2", type:"food", ratio:"9:16", hue:43, client:"@penelopescoffeeandtea", drive:"1pw7-QTMtA2m-KPhIeTjlEy7jQOwB08dU", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d67", title:"Sparkling yuzu", type:"food", ratio:"9:16", hue:20, client:"@cereteaxyz", drive:"1w0iCCmfgwh5OueumGRvI76XgDHd5YFEJ", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d68", title:"This and nobody bothering me", type:"food", ratio:"9:16", hue:37, client:"@vestarwc", drive:"1Wy4hBVi6kelOwsMIYQDdi58R1r2T9l6F", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d69", title:"What to order", type:"food", ratio:"9:16", hue:54, client:"@penelopescoffeeandtea", drive:"1VZIomxf46cR62hdckYW6LmZLuQefPy0K", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d70", title:"Snap", type:"food", ratio:"9:16", hue:31, client:"@penelopescoffeeandtea", drive:"1rdN58kFCqrepjob4DIgMdywEsFvU8Eq_", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d71", title:"When you're tired but have to give 10 service", type:"food", ratio:"9:16", hue:48, client:"@penelopescoffeeandtea", drive:"1G4E56cA_6D_aBzZsJAuPo4yYmwGWAFoX", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d72", title:"Why people come", type:"food", ratio:"9:16", hue:25, client:"@penelopescoffeeandtea", drive:"1uhEYAikXE9Vj4JTysSsepBE6d52mPIr6", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d73", title:"One thing I'll never say no to", type:"food", ratio:"9:16", hue:42, client:"@penelopescoffeeandtea", drive:"1sb7I9DBAzQ_Zf93MD-PSLMSHQX5mblCr", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d74", title:"I'll take whatever you recommend", type:"food", ratio:"9:16", hue:19, client:"@penelopescoffeeandtea", drive:"1OF3-jxeC2vnzidLlbHASQYV6SyLPwdug", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+  { id:"d75", title:"When you're getting yelled at by a customer", type:"food", ratio:"9:16", hue:36, client:"@penelopescoffeeandtea", drive:"1k_96S72IgkDhK2N0wk4zJ5E2Y8_cXO3H", desc:"Short-form food reel \u2014 fast hook, tight pacing and captions built for Instagram.", tools:["Premiere Pro","CapCut"] },
+];
+
+/* Resume — from your PDF. Put the PDF next to this page as resume.pdf (or paste a Drive link in `file`). */
+const RESUME = {
+  file: "resume.pdf",
+  summary: "Video editor with 1.5+ years of experience editing short-form and long-form content for YouTube, Reels and TikTok. Every edit is built around a strong hook in the first 3 seconds, tight pacing and clear captions — from raw footage to upload.",
+  experience: [
+    { role:"Video Editor — James La Fargue", org:"@jamesfar_ on Instagram · Part-time · Remote", period:"Oct 2026 – Present",
+      bullets:["Edit short-form food reels for Instagram, built around trending styles, fast hooks, tight pacing and captions."] },
+    { role:"Video Editor — Annabelle Phillips", org:"@littleenglishtv on Instagram · Remote", period:"Nov 2026 – Present",
+      bullets:["Edit short-form children's content for Instagram, keeping it bright, clear and easy for young viewers to follow."] },
+    { role:"Video Editor — Just Go Ministries", org:"@JustGoMinistries on YouTube · Remote", period:"Apr 2025 – Aug 2026",
+      bullets:["Edited long-form YouTube videos and short-form clips for a faith-based channel, from raw footage to upload.",
+               "Repurposed long-form videos into short-form clips with hooks, captions and pacing built for retention."] },
+  ],
+  education: [
+    { role:"Bachelor of Hospitality Management", org:"University of Cebu Lapu-Lapu and Mandaue", period:"2019 – 2024", bullets:[] },
+  ],
+  skills: ["Short-form vertical (9:16)","Long-form YouTube","Export & publishing","Pacing","Cinematic transitions","Captions & subtitles","Sound design","Music selection","Color grading","B-roll sourcing (incl. AI)",
+           "Adobe Premiere Pro","CapCut","Google Flow","ChatGPT","Claude"],
+};
+
+const TYPE_LABEL = { food:"Food Reels", talk:"Talking Head", ugc:"UGC & AI Ads", kids:"Kids Content", brand:"Brand Reels" };
+
+/* ════════════════════════════════════════════════════════════
+   Code below — you shouldn't need to touch it.
+   ════════════════════════════════════════════════════════════ */
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rcls = r => "r" + r.replace(":", "x");
+
+const I = {
+  play:  '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>',
+  film:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 4v16M16 4v16M3 9h5M3 15h5M16 9h5M16 15h5"/></svg>',
+  user:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+  chat:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 0 1-11.9 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/></svg>',
+  doc:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg>',
+  slider:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>',
+  mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 8 8 6 8-6"/></svg>',
+  pin:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  scissors:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 7.5 20 17M8 16.5 20 7"/></svg>',
+  bolt:  '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  text:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg>',
+  music: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>',
+  wand:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 11-11M14 4v3M12.5 5.5h3M19 11v3M17.5 12.5h3"/><path d="m13 8 3 3"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+  link:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  x:     '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg>',
+  sun:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  moon:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',
+  chev:  '<svg class="chev" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m1 1 6 6-6 6"/></svg>',
+};
+
+const row = ({icon, color, title, sub, value, href, chevron}) => {
+  const inner = `
+    <span class="ico" style="background:${color}">${I[icon]||""}</span>
+    <span class="t"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</span>
+    ${value?`<span class="v">${esc(value)}</span>`:""}${chevron?I.chev:""}`;
+  return href ? `<a class="row" href="${esc(href)}" ${href.startsWith("http")?'target="_blank" rel="noopener"':""}>${inner}</a>`
+              : `<div class="row">${inner}</div>`;
+};
+
+/* ───── Static content ───── */
+document.title = `${SITE.name} — ${SITE.role}`;
+$("#navBrand").textContent = SITE.name;
+$("#workSub").textContent = `${SITE.role} · ${SITE.location}. ${SITE.tagline}`;
+$("#avatar").textContent = SITE.name.trim()[0];
+$("#aboutName").textContent = SITE.name;
+$("#aboutRole").textContent = `${SITE.role} · ${SITE.location}`;
+$("#bio").textContent = SITE.bio;
+$("#widgets").innerHTML = [
+  { h:215, icon:"pin",   k:"Based in",  v:SITE.location.split(",")[0], s:SITE.location.split(",").slice(1).join(",").trim() },
+  { h:265, icon:"scissors", k:"Edits in", v:"Premiere Pro", s:"Also CapCut" },
+  { h:150, icon:"clock", k:"Time zone", v:SITE.timezone, s:"Philippine Standard Time" },
+  { h:25,  icon:"bolt",  k:"Status",    v:SITE.status, s:"Taking new projects" },
+].map(w => `<div class="widget" style="--h:${w.h}"><small>${I[w.icon]}${esc(w.k)}</small><div><b>${esc(w.v)}</b><span>${esc(w.s)}</span></div></div>`).join("");
+$("#details").innerHTML = [
+  row({icon:"film",   color:"#ff9500", title:"Specialty", value:"Short-form"}),
+  row({icon:"scissors", color:"#007aff", title:"Software", value:SITE.software}),
+  row({icon:"pin",    color:"#34c759", title:"Location",  value:SITE.location}),
+  row({icon:"globe",  color:"#5856d6", title:"Languages", value:"English"}),
+].join("");
+
+$("#svcEditing").innerHTML = [
+  row({icon:"film",     color:"#ff375f", title:"Short-form edits", sub:"Reels, TikToks and YouTube Shorts"}),
+  row({icon:"bolt",     color:"#ff9500", title:"UGC-style ads", sub:"Hook-first edits, including AI-generated B-roll"}),
+  row({icon:"scissors", color:"#007aff", title:"Long-form edits",  sub:"YouTube videos, talks and interviews"}),
+  row({icon:"film",     color:"#5856d6", title:"Highlights & repurposing", sub:"Long videos turned into short clips"}),
+].join("");
+$("#svcPolish").innerHTML = [
+  row({icon:"text",  color:"#34c759", title:"Captions & subtitles", sub:"Clean, readable, on-brand"}),
+  row({icon:"music", color:"#af52de", title:"Music & sound sync",  sub:"Cuts and transitions on the beat"}),
+  row({icon:"wand",  color:"#5ac8fa", title:"Pacing & transitions", sub:"Tight cuts, no dead air"}),
+  row({icon:"slider", color:"#ff9f0a", title:"Color grading & B-roll", sub:"Including AI-generated B-roll"}),
+].join("");
+
+const entry = e => `<div class="entry"><div class="top"><b>${esc(e.role)}</b><span class="when">${esc(e.period)}</span></div><div class="org">${esc(e.org)}</div>${e.bullets.length?`<ul>${e.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}</div>`;
+$("#resSummary").textContent = RESUME.summary;
+$("#resExp").innerHTML = RESUME.experience.map(entry).join("");
+$("#resEdu").innerHTML = RESUME.education.map(entry).join("");
+$("#resSkills").innerHTML = RESUME.skills.map(s => `<span class="chip">${esc(s)}</span>`).join("");
+$("#resDl").href = RESUME.file;
+
+$("#contactList").innerHTML =
+  row({icon:"mail", color:"#007aff", title:"Email", sub:SITE.email, href:"mailto:"+SITE.email, chevron:true}) +
+  SITE.links.map(l => row({icon:l.icon||"link", color:l.color, title:l.label, sub:l.handle, href:l.url, chevron:true})).join("");
+$("#contactNote").textContent = `Based in ${SITE.location} (${SITE.timezone}).`;
+
+/* ───── Tab bar + views ───── */
+const TABS = [
+  { id:"work",     label:"Work",     icon:"film" },
+  { id:"about",    label:"About",    icon:"user" },
+  { id:"services", label:"Services", icon:"slider" },
+  { id:"resume",   label:"Resume",   icon:"doc" },
+  { id:"contact",  label:"Contact",  icon:"mail" },
+];
+$("#tabbar").innerHTML = TABS.map(t => `<button class="tab" data-tab="${t.id}">${I[t.icon]}<span>${t.label}</span></button>`).join("");
+
+function show(id, push=true){
+  if (!TABS.some(t => t.id === id)) id = "work";
+  $$(".view").forEach(v => v.classList.toggle("on", v.id === "view-"+id));
+  $$(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === id));
+  $("#navTitle").textContent = $("#view-"+id).dataset.title;
+  if (push) { try { history.replaceState(null, "", "#"+id); } catch(e){ location.hash = id; } }
+  window.scrollTo({top:0, behavior:"instant"});
+  onScroll();
+}
+$("#tabbar").addEventListener("click", e => { const b = e.target.closest(".tab"); if (b) show(b.dataset.tab); });
+document.addEventListener("click", e => { const a = e.target.closest("[data-go]"); if (a){ e.preventDefault(); show(a.dataset.go); } });
+window.addEventListener("hashchange", () => show(location.hash.slice(1), false));
+
+function onScroll(){ $("#nav").classList.toggle("scrolled", window.scrollY > 48); }
+window.addEventListener("scroll", onScroll, {passive:true});
+
+/* ───── Theme toggle ───── */
+const mq = matchMedia("(prefers-color-scheme: dark)");
+const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : mq.matches;
+function paintThemeBtn(){ $("#themeBtn").innerHTML = isDark() ? I.sun : I.moon; }
+$("#themeBtn").addEventListener("click", () => { document.documentElement.dataset.theme = isDark() ? "light" : "dark"; paintThemeBtn(); });
+mq.addEventListener?.("change", paintThemeBtn);
+paintThemeBtn();
+
+/* ───── Work grid ───── */
+/* Google Drive helpers: accept a full share link or a bare file ID */
+const driveId = s => { const m = String(s).match(/\/d\/([\w-]+)|[?&]id=([\w-]+)/); return m ? (m[1] || m[2]) : String(s).trim(); };
+const thumbOf = p => p.thumb || (p.drive ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId(p.drive))}&sz=w800` : "");
+const byId = Object.fromEntries(PROJECTS.map(p => [p.id, p]));
+const featured = PROJECTS.find(p => p.featured) || PROJECTS[0];
+$("#featured").innerHTML = featured ? `
+  <button class="featured" style="--h:${featured.hue}" data-open="${featured.id}" ${featured.thumb?`data-thumb`:""}>
+    ${thumbOf(featured)?`<img src="${esc(thumbOf(featured))}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`:""}
+    <span class="f-top">Featured</span>
+    <span class="f-bot">
+      <span><h2>${esc(featured.title)}</h2><p>${esc(featured.desc)}</p></span>
+      <span class="play-pill">${I.play}Watch</span>
+    </span>
+  </button>` : "";
+
+let filter = "all";
+const PAGE = 24;
+let shown = PAGE;
+const typeKeys = Object.keys(TYPE_LABEL).filter(k => PROJECTS.some(p => p.type === k));
+function renderPills(){
+  const all = [["all","All",PROJECTS.length], ...typeKeys.map(k => [k, TYPE_LABEL[k], PROJECTS.filter(p => p.type === k).length])];
+  $("#pills").innerHTML = all.map(([k,l,n]) => `<button class="pill ${k===filter?"on":""}" data-f="${k}" role="tab">${esc(l)}<small>${n}</small></button>`).join("");
+}
+function renderGrid(){
+  const list = PROJECTS.filter(p => filter === "all" || p.type === filter);
+  const vis = list.slice(0, shown);
+  $("#gridTitle").textContent = filter === "all" ? "All videos" : TYPE_LABEL[filter];
+  $("#gridCount").textContent = list.length + (list.length === 1 ? " video" : " videos");
+  $("#grid").innerHTML = vis.length ? vis.map(p => `
+    <button class="card" data-open="${p.id}">
+      <div class="thumb ${rcls(p.ratio)}" style="--h:${p.hue}">
+        ${thumbOf(p)?`<img src="${esc(thumbOf(p))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}
+        <span class="play">${I.play}</span>
+        ${p.duration?`<span class="badge">${esc(p.duration)}</span>`:""}
+      </div>
+      <h4>${esc(p.title)}</h4>
+      <p>${p.client ? esc(p.client) : TYPE_LABEL[p.type]}</p>
+    </button>`).join("") : `<div class="empty">Nothing here yet.</div>`;
+  $("#more").innerHTML = list.length > shown ? `<button id="moreBtn">Show ${Math.min(PAGE, list.length - shown)} more</button>` : "";
+}
+$("#pills").addEventListener("click", e => {
+  const b = e.target.closest(".pill"); if (!b) return;
+  filter = b.dataset.f; shown = PAGE; renderPills(); renderGrid();
+});
+$("#more").addEventListener("click", e => { if (e.target.closest("#moreBtn")) { shown += PAGE; renderGrid(); } });
+/* Fix each video's shape (vertical / horizontal / square) from its thumbnail once it loads */
+document.addEventListener("load", e => {
+  const img = e.target; if (!(img instanceof HTMLImageElement) || !img.naturalWidth) return;
+  const host = img.closest("[data-open]"); const p = host && byId[host.dataset.open]; if (!p || p.ratioFixed) return;
+  const r = img.naturalWidth / img.naturalHeight;
+  p.ratio = r > 1.25 ? "16:9" : r < 0.8 ? "9:16" : "1:1"; p.ratioFixed = true;
+  const t = img.closest(".thumb"); if (t) t.className = "thumb " + rcls(p.ratio);
+}, true);
+renderPills();
+renderGrid();
+
+/* ───── Sheet player ───── */
+const sheet = $("#sheet"), scrim = $("#scrim"), player = $("#player");
+$("#sheetClose").innerHTML = I.x;
+let lastFocus = null;
+
+function openSheet(id){
+  const p = byId[id]; if (!p) return;
+  lastFocus = document.activeElement;
+  player.className = "player " + rcls(p.ratio);
+  player.style.setProperty("--h", p.hue);
+  if (p.drive)        player.innerHTML = `<iframe src="https://drive.google.com/file/d/${encodeURIComponent(driveId(p.drive))}/preview" allow="autoplay; fullscreen" allowfullscreen title="${esc(p.title)}"></iframe>`;
+  else if (p.youtube) player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube)}?autoplay=1&rel=0&playsinline=1" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen title="${esc(p.title)}"></iframe>`;
+  else if (p.vimeo)   player.innerHTML = `<iframe src="https://player.vimeo.com/video/${encodeURIComponent(p.vimeo)}?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(p.title)}"></iframe>`;
+  else if (p.file)    player.innerHTML = `<video src="${esc(p.file)}" ${p.thumb?`poster="${esc(p.thumb)}"`:""} controls autoplay playsinline></video>`;
+  else player.innerHTML = `<div class="ph">${I.play}<b>${esc(p.title)}</b><small>Sample slot — add a <code>drive</code>, <code>youtube</code>, <code>vimeo</code> or <code>file</code> link to this project to play your video here.</small></div>`;
+  $("#sheetBody").innerHTML = `
+    <h2>${esc(p.title)}</h2>
+    <div class="chips">
+      <span class="chip blue">${TYPE_LABEL[p.type]}</span>
+      ${p.client?`<span class="chip">${esc(p.client)}</span>`:""}
+      ${p.duration?`<span class="chip">${esc(p.duration)}</span>`:""}
+      ${(p.tools||[]).map(t => `<span class="chip">${esc(t)}</span>`).join("")}
+      ${p.sample?`<span class="chip">Sample</span>`:""}
+    </div>
+    <p>${esc(p.desc)}</p>
+    <a class="cta" href="#contact" data-go="contact" id="sheetCta">Work with me</a>
+    ${p.drive?`<a class="cta alt" href="https://drive.google.com/file/d/${encodeURIComponent(driveId(p.drive))}/view" target="_blank" rel="noopener">Open in Google Drive</a>`:""}`;
+  scrim.classList.add("on"); sheet.classList.add("on"); sheet.scrollTop = 0;
+  document.body.style.overflow = "hidden";
+  setTimeout(() => $("#sheetClose").focus({preventScroll:true}), 300);
+}
+function closeSheet(){
+  sheet.classList.remove("on"); scrim.classList.remove("on"); sheet.style.transform = "";
+  document.body.style.overflow = "";
+  setTimeout(() => { if (!sheet.classList.contains("on")) player.innerHTML = ""; }, 400);
+  lastFocus && lastFocus.focus && lastFocus.focus({preventScroll:true});
+}
+document.addEventListener("click", e => {
+  const o = e.target.closest("[data-open]"); if (o) openSheet(o.dataset.open);
+  if (e.target.closest("#sheetCta")) closeSheet();
+});
+scrim.addEventListener("click", closeSheet);
+$("#sheetClose").addEventListener("click", closeSheet);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sheet.classList.contains("on")) closeSheet(); });
+
+/* swipe the grabber down to dismiss, like a native sheet */
+(() => {
+  const head = $("#sheetHead"); let y0 = null, dy = 0;
+  head.addEventListener("pointerdown", e => { if (e.target.closest("#sheetClose")) return; y0 = e.clientY; dy = 0; head.setPointerCapture(e.pointerId); sheet.classList.add("drag"); });
+  head.addEventListener("pointermove", e => { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); sheet.style.transform = `translate(-50%, ${dy}px)`; });
+  const end = () => { if (y0 === null) return; y0 = null; sheet.classList.remove("drag");
+    if (dy > 110) closeSheet(); else sheet.style.transform = ""; };
+  head.addEventListener("pointerup", end); head.addEventListener("pointercancel", end);
+})();
+
+/* ───── Boot ───── */
+show(location.hash.slice(1) || "work", false);
+</script>
+</body>
+</html>
