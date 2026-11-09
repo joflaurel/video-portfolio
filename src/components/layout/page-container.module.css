@@ -1,0 +1,5 @@
+.main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: calc(52px + env(safe-area-inset-top)) 20px 140px;
+}

@@ -1,0 +1,91 @@
+.groupTitle {
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--label2);
+  margin: 28px 16px 8px;
+}
+
+.group {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+  min-height: 52px;
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+
+.row + .row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 62px;
+  right: 0;
+  height: 0.5px;
+  background: var(--sep);
+}
+
+a.row:active {
+  background: var(--fill);
+}
+
+.icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--icon-bg);
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.text b {
+  display: block;
+  font-weight: 500;
+  font-size: 17px;
+}
+
+.text small {
+  display: block;
+  font-size: 13px;
+  color: var(--label2);
+}
+
+.value {
+  color: var(--label2);
+  font-size: 17px;
+  text-align: right;
+}
+
+.chevron {
+  width: 8px;
+  height: 14px;
+  color: var(--label3);
+  flex: none;
+}
+
+.footnote {
+  font-size: 13px;
+  color: var(--label2);
+  margin: 8px 16px 0;
+}

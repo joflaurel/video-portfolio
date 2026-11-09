@@ -1,0 +1,29 @@
+.grid {
+  list-style: none;
+  columns: 2;
+  column-gap: 14px;
+}
+
+.item {
+  break-inside: avoid;
+  margin-bottom: 22px;
+}
+
+.empty {
+  text-align: center;
+  color: var(--label2);
+  padding: 60px 0;
+}
+
+@media (min-width: 620px) {
+  .grid {
+    columns: 3;
+    column-gap: 18px;
+  }
+}
+
+@media (min-width: 960px) {
+  .grid {
+    columns: 4;
+  }
+}

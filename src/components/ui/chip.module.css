@@ -1,0 +1,13 @@
+.chip {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--label2);
+}
+
+.chip[data-tone='accent'] {
+  background: color-mix(in srgb, var(--blue) 14%, transparent);
+  color: var(--blue);
+}
