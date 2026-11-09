@@ -15,6 +15,15 @@ import type { Project } from './types';
  */
 export const PROJECTS: readonly Project[] = [
   {
+    id: 'd76',
+    title: 'How To Stop Sinning',
+    category: 'longform',
+    client: 'Just Go Ministries',
+    hue: 220,
+    orientation: 'horizontal',
+    media: drive('1Nz0IPRuNlU5hkb5aEqV2_01NHPVGmEEm'),
+  },
+  {
     id: 'd1',
     title: 'You look tired from scrolling',
     category: 'food',
