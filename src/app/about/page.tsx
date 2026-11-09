@@ -7,7 +7,7 @@ import { SITE } from '@/content/site';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: SITE.bio,
+  description: `About ${SITE.name}, a video editor in ${SITE.location} with 1.5+ years editing short-form and long-form content for YouTube, Reels and TikTok.`,
   alternates: { canonical: '/about' },
 };
 

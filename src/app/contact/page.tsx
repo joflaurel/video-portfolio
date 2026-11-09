@@ -4,8 +4,8 @@ import { PageHeader } from '@/components/ui/page-header';
 import { SITE } from '@/content/site';
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  description: `Get in touch with ${SITE.name} about a video editing project.`,
+  title: 'Hire a Video Editor in the Philippines',
+  description: `Hire ${SITE.name}, a video editor in ${SITE.location}. Message on WhatsApp or email to start your video editing project.`,
   alternates: { canonical: '/contact' },
 };
 

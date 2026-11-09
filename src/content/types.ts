@@ -50,6 +50,8 @@ export interface Site {
   readonly status: string;
   readonly statusNote: string;
   readonly tagline: string;
+  /** One or two sentences under the Work title — what Google and new visitors read first. */
+  readonly intro: string;
   readonly bio: string;
   readonly specialty: string;
   readonly languages: string;

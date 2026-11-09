@@ -5,8 +5,9 @@ import { PageHeader } from '@/components/ui/page-header';
 import { SERVICE_GROUPS } from '@/content/services';
 
 export const metadata: Metadata = {
-  title: 'Services',
-  description: 'Short-form edits, UGC-style ads, long-form edits, captions, sound and color.',
+  title: 'Video Editing Services in the Philippines',
+  description:
+    'Short-form Reels and TikToks, UGC-style ads, long-form YouTube edits, captions, music sync and color grading from a video editor in Cebu, Philippines.',
   alternates: { canonical: '/services' },
 };
 

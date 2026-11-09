@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { PageHeader } from '@/components/ui/page-header';
+import { HireButtons } from '@/components/work/hire-buttons';
 import { Testimonials } from '@/components/work/testimonials';
 import { WorkGallery } from '@/components/work/work-gallery';
 import { PROJECTS } from '@/content/projects';
@@ -16,7 +17,8 @@ export default function WorkPage() {
 
   return (
     <>
-      <PageHeader title="Work" subtitle={`${SITE.role} · ${SITE.location}. ${SITE.tagline}`} />
+      <PageHeader title="Work" subtitle={SITE.intro} />
+      <HireButtons />
       <WorkGallery projects={projects} afterFeatured={<Testimonials />} />
       <script
         type="application/ld+json"
